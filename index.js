@@ -21,17 +21,26 @@ var _transitions = [
 var linkedByIndex;
 var nlayers;
 var lay;
-function laycolor(alpha) {
-    var colstring = "rgba("+
-        (90+Math.sqrt(lay)*150)
-        +","+
-        (240-50*lay)
-        +","+
-        (240-100*Math.sqrt(lay))
-        +","+alpha
-        +")";
-    return colstring
-};
+
+////random generator and color intializer
+function mulberry32(a) { return function() {
+      var t = a += 0x6D2B79F5;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+}
+function threerand(){ 
+    var ra = Array.from(Array(3), () => Math.floor(randco()*105+150))
+    return "rgba(" + ra[0] + "," + ra[1] + "," + ra[2] + ","
+}
+var seed = 30;
+var randco = mulberry32(seed);
+//set first colors manually and remaining stochastically
+var laycolor = ["rgba(90,240,240,", "rgba(240,190,140,"]
+var laymanual = laycolor.length
+////random generator and color intializer
+
 var mpl = 1;
 var nodes = {};
 var layers = {};
@@ -84,7 +93,7 @@ d3.select("#goforward-btn").on("click", timeforwards);
 
 
 // Load network data from external file with toy net as fallback
-d3.csv("testset.csv", function(error, links){
+d3.csv("firms.csv", function(error, links){
     if (error){
         var links = [
             {source:"N1", target:"N2", layer:"eins", value:100, time:0},
@@ -135,6 +144,9 @@ d3.csv("testset.csv", function(error, links){
     graphlayers = layers;
     graphtimes = times;
     nlayers = Object.keys(graphlayers).length;
+    for (var i=0; i<nlayers-laymanual; i++){
+        laycolor.push(threerand())
+    }
 
     // SIMULATION INIT
     simulation.force("charge", d3.forceManyBody()
@@ -157,7 +169,7 @@ d3.csv("testset.csv", function(error, links){
             .style("position", "absolute")
             .style("left", "100px")
             .style("top", (lay*height/2.5).toString()+"px")
-            .style("background-color", laycolor(0.3))
+            .style("background-color", laycolor[lay]+"0.3)" )
             .style("transform","rotate3D(-0.9,0.4,0.4,70deg)")
             .style("-webkit-transform","rotate3D(-0.9,0.4,0.4,70deg)")
             .style("outline","1px solid black")
@@ -192,7 +204,7 @@ d3.csv("testset.csv", function(error, links){
             .style("font-size", fontsize+"px")
             .style("stroke", "#000000")
             .style("stroke-width", "0.2px")
-            .style("fill", laycolor(1.0));
+            .style("fill", laycolor[lay]+"1.0)" )
     }
 
     update();
@@ -280,7 +292,7 @@ function update() {
             .style("stroke", "#000000")
             .style("stroke-width", "2px")
             .style("opacity", nodeopacity)
-            .style("fill", laycolor(1.0))
+            .style("fill", laycolor[lay]+"1.0)" )
             .on('mouseover.fade', fade(0.05))
             .on('click.fade', connectivityfade(0.05))
             //.on('dblclick.fade', connectivityfade(0.05))
@@ -303,7 +315,7 @@ function update() {
             .text(function(d) { return d.name; })
             .style("font-size", function(d){return rscal*Math.sqrt(d.degree[lay]) })
             .style("fill","#000")
-            .style("stroke", laycolor(0.3))
+            .style("stroke", laycolor[lay]+"0.3)" )
             .style("opacity", textopacity)
             .style("stroke-width", "4px");
         circle_layer[lay].append("title")
