@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 
-n = 500
+n = 1000
 lb = 1
-ub = 200
+ub = 500
 df = pd.DataFrame({
     "source": np.random.randint(lb,ub,n),
     "target": np.random.randint(lb,ub,n),
