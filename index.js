@@ -65,7 +65,7 @@ var dilink_layer=[];
 var dititle_layer=[];
 var layer_label=[];
 var width = 600
-var height = 4/6*width;
+var height = 6/6*width;
 var fontsize = height/15;
 var linkcolor = "#000";
 var arrowcolor = linkcolor;
@@ -77,6 +77,7 @@ var markerbreite = 12;
 var markerhoehe = 12;
 var timeCounter = 0;
 var rscal = 10;
+var tempreachedvector = [];
 var reachednodes = [];
 var reachedlinks = [];
 var t1n,t1r,tn,tr = [];
@@ -105,34 +106,53 @@ d3.select("#goforward-btn").on("click", timeforwards);
 
 
 // Load network data from external file with toy net as fallback
-d3.csv("fasdirms.csv", function(error, links){
+d3.csv("ffasirms.csv", function(error, links){
     if (error){
+        //skiphere
         var links = [
-            //{source:"N1", target:"N2", layer:"eins", value:10, time:0, sourcetype:"c", targettype:"c"},
-            //{source:"N1", target:"N3", layer:"eins", value:10, time:0, sourcetype:"c", targettype:"c"},
-            //{source:"N2", target:"N4", layer:"eins", value:10, time:0, sourcetype:"c", targettype:"c"},
-            //{source:"N2", target:"N5", layer:"eins", value:10, time:0, sourcetype:"c", targettype:"c"},
-            //{source:"N4", target:"N5", layer:"eins", value:10, time:0, sourcetype:"c", targettype:"c"},
-            //{source:"N3", target:"N6", layer:"eins", value:10, time:0, sourcetype:"c", targettype:"c"},
-            //{source:"N3", target:"N7", layer:"eins", value:10, time:0, sourcetype:"c", targettype:"c"}
-             {source:"N1", target:"N2", layer:"eins", value:100, time:0, sourcetype:"c", targettype:"c"},
-             {source:"N2", target:"N3", layer:"eins", value:1000, time:0, sourcetype:"c", targettype:"p"},
-             {source:"N2", target:"N4", layer:"eins", value:50, time:0, sourcetype:"c", targettype:"p"},
-             {source:"N1", target:"N3", layer:"eins", value:50, time:0, sourcetype:"c", targettype:"p"},
-             {source:"N2", target:"N4", layer:"zwei", value:9, time:0, sourcetype:"c", targettype:"p"},
-             {source:"N3", target:"N4", layer:"zwei", value:50, time:0, sourcetype:"p", targettype:"c"},
-             {source:"N1", target:"N2", layer:"eins", value:4, time:1, sourcetype:"p", targettype:"p"},
-             {source:"N1", target:"N3", layer:"eins", value:4, time:1, sourcetype:"p", targettype:"c"},
-             {source:"N3", target:"N4", layer:"eins", value:4, time:1, sourcetype:"c", targettype:"c"},
-             {source:"N3", target:"N2", layer:"eins", value:4, time:1, sourcetype:"c", targettype:"p"},
-             {source:"N4", target:"N3", layer:"drei", value:4, time:1, sourcetype:"c", targettype:"c"},
-             {source:"N1", target:"N4", layer:"drei", value:4, time:1, sourcetype:"p", targettype:"c"},
-             {source:"N3", target:"N2", layer:"drei", value:4, time:1, sourcetype:"c", targettype:"p"},
-             {source:"N1", target:"N3", layer:"vier", value:4, time:2, sourcetype:"c", targettype:"p"},
-             {source:"N4", target:"N3", layer:"vier", value:4, time:2, sourcetype:"p", targettype:"p"},
-             {source:"N2", target:"N3", layer:"vier", value:4, time:3, sourcetype:"c", targettype:"p"},
-             {source:"N2", target:"N1", layer:"zwei", value:4, time:3, sourcetype:"c", targettype:"c"},
-             {source:"N2", target:"N3", layer:"zwei", value:4, time:3, sourcetype:"c", targettype:"p"}
+            {source:"N0", target:"N1", layer:"eins", value:10, time:0, sourcetype:"c", targettype:"c"},
+            {source:"N1", target:"N3", layer:"eins", value:10, time:0, sourcetype:"c", targettype:"c"},
+            {source:"N1", target:"N2", layer:"eins", value:10, time:0, sourcetype:"c", targettype:"c"},
+            {source:"N2", target:"N4", layer:"eins", value:10, time:0, sourcetype:"c", targettype:"c"},
+            {source:"N2", target:"N5", layer:"eins", value:10, time:0, sourcetype:"c", targettype:"c"},
+            {source:"N4", target:"N5", layer:"eins", value:10, time:0, sourcetype:"c", targettype:"c"},
+            {source:"Negal", target:"N55", layer:"eins", value:10, time:0, sourcetype:"c", targettype:"c"},
+            {source:"Negal", target:"N56", layer:"eins", value:10, time:0, sourcetype:"c", targettype:"c"},
+            {source:"N55", target:"N56", layer:"eins", value:10, time:0, sourcetype:"c", targettype:"c"},
+            {source:"N5", target:"Negal", layer:"eins", value:10, time:0, sourcetype:"c", targettype:"c"},
+            {source:"N3", target:"N6", layer:"eins", value:10, time:0, sourcetype:"c", targettype:"c"},
+            {source:"N3", target:"N7", layer:"eins", value:10, time:0, sourcetype:"c", targettype:"c"},
+            {source:"N2", target:"N8", layer:"eins", value:10, time:0, sourcetype:"c", targettype:"c"},
+            {source:"N8", target:"N9", layer:"eins", value:10, time:0, sourcetype:"c", targettype:"c"},
+            {source:"N2", target:"N3", layer:"eins", value:10, time:0, sourcetype:"c", targettype:"c"},
+             {source:"M1", target:"M2", layer:"zwei", value:4, time:0, sourcetype:"p", targettype:"p"},
+             {source:"M1", target:"M3", layer:"zwei", value:4, time:0, sourcetype:"p", targettype:"c"},
+             {source:"M3", target:"M4", layer:"zwei", value:4, time:0, sourcetype:"c", targettype:"c"},
+             {source:"M3", target:"M2", layer:"zwei", value:4, time:0, sourcetype:"c", targettype:"p"},
+             {source:"M4", target:"M3", layer:"drei", value:4, time:0, sourcetype:"c", targettype:"c"},
+             {source:"M1", target:"M4", layer:"drei", value:4, time:0, sourcetype:"p", targettype:"c"},
+             {source:"M3", target:"M2", layer:"drei", value:4, time:0, sourcetype:"c", targettype:"p"}
+
+
+        //     //{source:"N1", target:"N2", layer:"eins", value:100, time:0, sourcetype:"c", targettype:"c"},
+        //     //{source:"N2", target:"N3", layer:"eins", value:1000, time:0, sourcetype:"c", targettype:"p"},
+        //     //{source:"N2", target:"N4", layer:"eins", value:50, time:0, sourcetype:"c", targettype:"p"},
+        //     //{source:"N1", target:"N3", layer:"eins", value:50, time:0, sourcetype:"c", targettype:"p"},
+        //     //{source:"N2", target:"N4", layer:"zwei", value:9, time:0, sourcetype:"c", targettype:"p"},
+        //     //{source:"N3", target:"N4", layer:"zwei", value:50, time:0, sourcetype:"p", targettype:"c"},
+
+        //     {source:"N1", target:"N2", layer:"eins", value:4, time:1, sourcetype:"p", targettype:"p"},
+        //     {source:"N1", target:"N3", layer:"eins", value:4, time:1, sourcetype:"p", targettype:"c"},
+        //     {source:"N3", target:"N4", layer:"eins", value:4, time:1, sourcetype:"c", targettype:"c"},
+        //     {source:"N3", target:"N2", layer:"eins", value:4, time:1, sourcetype:"c", targettype:"p"},
+        //     {source:"N4", target:"N3", layer:"drei", value:4, time:1, sourcetype:"c", targettype:"c"},
+        //     {source:"N1", target:"N4", layer:"drei", value:4, time:1, sourcetype:"p", targettype:"c"},
+        //     {source:"N3", target:"N2", layer:"drei", value:4, time:1, sourcetype:"c", targettype:"p"}
+        //     //{source:"N1", target:"N3", layer:"vier", value:4, time:2, sourcetype:"c", targettype:"p"},
+        //     //{source:"N4", target:"N3", layer:"vier", value:4, time:2, sourcetype:"p", targettype:"p"},
+        //     //{source:"N2", target:"N3", layer:"vier", value:4, time:3, sourcetype:"c", targettype:"p"},
+        //     //{source:"N2", target:"N1", layer:"zwei", value:4, time:3, sourcetype:"c", targettype:"c"},
+        //     //{source:"N2", target:"N3", layer:"zwei", value:4, time:3, sourcetype:"c", targettype:"p"}
         ];
     }
 
@@ -179,7 +199,7 @@ d3.csv("fasdirms.csv", function(error, links){
 
     // SIMULATION INIT
     simulation.force("charge", d3.forceManyBody()
-        .strength(-2000-200*Math.sqrt(Object.keys(graphlayers).length))
+        .strength(-500-200*Math.sqrt(Object.keys(graphlayers).length))
         .distanceMin(100)
         .distanceMax(500)
     )
@@ -480,15 +500,20 @@ function update() {
           return 1;
       }
 
-      function outbfs(start, reachedvector, reachedvector2, maxpathlength) {
+      function outbfs(start, maxpathlength) {
+        console.log("STAAAAAAAAAAAART")
+        var reachedvector = [];
+        var glf = [];
+        var distances = {};
         var cont = [];
+        var prevreachedvector = [];
+        var newreachedvector = [];
         cont.push(start.name)
         reachedvector.push(start.name);
-        var distances = {};
         distances[start.name] = 0;
 
         while (cont.length > 0) {
-          // console.log(distances)
+          console.log("NEW CONT. REMAINING: ", cont)
           var vert = cont.shift()
           var vertnode = graphnodes.filter(u => u.name==vert)[0];
           var distprev = Math.max(...Object.values(distances))
@@ -497,39 +522,58 @@ function update() {
             if (!reachedvector.includes(x)) {
               distances[x] = distances[vert] + 1;
               cont.push(x);
-            }
+            } 
           });
 
-          if(Math.max(...Object.values(distances)) - distprev>0) { 
-            console.log("all nodes of level <=", distprev) 
-            if (distprev == maxpathlength) { 
-              return 1 
-            } else if (withinlinks.length > 0){
-              for (var i=0; i<withinlinks.length; i++){
-                var tmp = withinlinks.shift()
-                reachedvector2.push(tmp)
-              }
+          if(Math.max(...Object.values(distances)) - distprev>0) {
+            newreachedvector = reachedvector.filter(x=>!prevreachedvector.includes(x))
+            console.log("  all nodes of level <=", distprev, ": ", reachedvector)
+            console.log("    previous nodes: ", prevreachedvector)
+            console.log("    new nodes: ", newreachedvector)
+            var glf_oldtoold = graphlinks
+              .filter(function(x){return prevreachedvector.includes(x.source.name) && !newreachedvector.includes(x.target.name)})
+              .map(x=>[x.source.name, x.target.name])
+            var glf_oldtonew= graphlinks
+              .filter(function(x){return prevreachedvector.includes(x.source.name) && newreachedvector.includes(x.target.name)})
+              .map(x=>[x.source.name, x.target.name])
+            glf = [...new Set([...new Set(glf_oldtoold), ...new Set(glf_oldtonew)])]
+            console.log("      old-to-old: ", glf_oldtoold)
+            console.log("      old-to-new: ", glf_oldtonew)
+            prevreachedvector = reachedvector.map(x=>x)
+            if (distprev == maxpathlength) {
+              console.log("  in we go")
+              return [reachedvector, glf]
             }
           }
 
           vertnode.outneighbors.forEach(function(x){
             if (!reachedvector.includes(x)) {
               reachedvector.push(x);
-              if ( !reachedvector2.includes([vert,x]) ) {
-                reachedvector2.push([vert,x])
-              }
-            } else {
-              if (maxpathlength == -1){
-                reachedvector2.push([vert,x])
-              } else {
-                withinlinks.push([vert,x])
-              }
             }
           });
 
         }
-        return 1;
+        newreachedvector = reachedvector.filter(x=>!prevreachedvector.includes(x))
+        console.log("  all nodes of level <=", distprev, ": ", reachedvector)
+        console.log("    previous nodes: ", prevreachedvector)
+        console.log("    new nodes: ", newreachedvector)
+        if (maxpathlength == -1){
+          glf = graphlinks.filter(function(x){return reachedvector.includes(x.source.name)}).map(x=>[x.source.name, x.target.name])
+        } else {
+          var glf_oldtoold = graphlinks
+            .filter(function(x){return prevreachedvector.includes(x.source.name) && !newreachedvector.includes(x.target.name)})
+            .map(x=>[x.source.name, x.target.name])
+          var glf_oldtonew= graphlinks
+            .filter(function(x){return prevreachedvector.includes(x.source.name) && newreachedvector.includes(x.target.name)})
+            .map(x=>[x.source.name, x.target.name])
+          glf = [...new Set([...new Set(glf_oldtoold), ...new Set(glf_oldtonew)])]
+        }
+        console.log("      old-to-old: ", glf_oldtoold)
+        console.log("      old-to-new: ", glf_oldtonew)
+        console.log("  out we go")
+        return [reachedvector, glf]
       }
+
       function inbfs(start, reachedvector, reachedvector2, maxpathlength) {
         var cont = [];
         cont.push(start.name)
@@ -538,7 +582,6 @@ function update() {
         distances[start.name] = 0;
 
         while (cont.length > 0) {
-          // console.log(distances)
           var vert = cont.shift()
           var vertnode = graphnodes.filter(u => u.name==vert)[0];
           var distprev = Math.max(...Object.values(distances))
@@ -606,9 +649,9 @@ function update() {
                 reachednodes = [];
                 reachedlinks = [];
                 if (!d3.event.shiftKey && d3.event.ctrlKey && !d3.event.altKey){
-                    outbfs(d, reachednodes, reachedlinks, 1)
+                    [reachednodes,reachedlinks] = outbfs(d, 1)
                 } else if (d3.event.shiftKey && d3.event.ctrlKey && !d3.event.altKey) {
-                    outbfs(d, reachednodes, reachedlinks, -1)
+                    [reachednodes,reachedlinks] = outbfs(d, -1)
                 } else if (!d3.event.shiftKey && !d3.event.ctrlKey && d3.event.altKey) {
                     inbfs(d, reachednodes, reachedlinks, 1)
                 } else if (d3.event.shiftKey && !d3.event.ctrlKey && d3.event.altKey) {
@@ -650,9 +693,9 @@ function update() {
                 mpl=mpl+1;
                 // Ctrl/Alt-Click: +1Pathlength; Shift+Ctrl/Alt-Click: +InfPathlength
                 if (!d3.event.shiftKey && d3.event.ctrlKey && !d3.event.altKey){
-                    outbfs(d, reachednodes, reachedlinks, mpl)
+                    [reachednodes,reachedlinks] = outbfs(d, mpl)
                 } else if (d3.event.shiftKey && d3.event.ctrlKey && !d3.event.altKey) {
-                    outbfs(d, reachednodes, reachedlinks, -1)
+                    [reachednodes,reachedlinks] = outbfs(d, -1)
                 } else if (!d3.event.shiftKey && !d3.event.ctrlKey && d3.event.altKey) {
                     inbfs(d, reachednodes, reachedlinks, mpl)
                 } else if (d3.event.shiftKey && !d3.event.ctrlKey && d3.event.altKey) {
