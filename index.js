@@ -38,7 +38,7 @@ var dilink_layer=[];
 var dititle_layer=[];
 var layer_label=[];
 var layer_typelabel=[];
-var width = 1000
+var width = 800
 var height = 4/6*width;
 var fontsize = height/15;
 var linkcolor = "#000";
@@ -131,7 +131,7 @@ d3.select("#goforward-btn").on("click", timeforwards);
 
 
 // Load network data from external file with toy net as fallback
-d3.csv("casdffirms.csv", function(error, links){
+d3.csv("afsfirms.csv", function(error, links){
   if (error){
     //skiphere
     var links = [
@@ -323,7 +323,7 @@ d3.csv("casdffirms.csv", function(error, links){
       .attr("layer", Object.keys(graphlayers)[lay])
       .style("position", "absolute")
       .style("left", "100px")
-      .style("top", (lay*height/4.5).toString()+"px")
+      .style("top", (lay*height/2).toString()+"px")
       .style("background-color", laycolor[lay]+layeropacity+")" )
       .style("transform","rotate3D(-0.9,0.4,0.4,70deg)")
       .style("-webkit-transform","rotate3D(-0.9,0.4,0.4,70deg)")
@@ -498,7 +498,9 @@ function update() {
             .style("stroke", function(d){return nodelaycolor[d.nodetype.name]+"1.0)"})//laycolor[lay]+layeropacity+")"
             .style("opacity", textopacity)
             .style("stroke-width", "0.75px"); //"4px"
-         circle_layer[lay].append("svg:title")
+        circle_layer[lay].selectAll(".nodetitle").remove();
+         circle_layer[lay].append("title")
+            .attr("class","nodetitle")
              .text(function(d) { 
                if (d.nodetype.name == "defaulttype"){
                  return "Node: " + d.name;
