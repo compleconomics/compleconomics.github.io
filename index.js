@@ -164,13 +164,14 @@ function defaultdata(){
     return outdata
 }
 // Load network data from external file with toy net as fallback
-d3.json("pydata.json", function(error, data){
+d3.json("asdfpydata.json", function(error, data){
      if (error){ data={"links":defaultdata()} }
      allgraphlinks = data["links"];
 // d3.csv("firms.csv", function(error, data){
 //     if (error){ data = defaultdata() }
 //     allgraphlinks = data;
 
+    console.log(allgraphlinks)
 
   // Compute the distinct nodes and layers from the links.
   if (distributelayers == false){
@@ -256,7 +257,7 @@ d3.json("pydata.json", function(error, data){
         //     if (d.sourcetype.name == d.targettype.name){
         //         return 1
         //     } else {
-        //         return 100
+        //         return 200
         //     }
         // })
     )
@@ -272,6 +273,7 @@ d3.json("pydata.json", function(error, data){
       .attr("layer", Object.keys(graphlayers)[lay])
       .style("position", "absolute")
       .style("left", "100px")
+      .style("-webkit-print-color-adjust", "exact")
       .attr("width", width)
       .attr("height", height)
       .on("click", function() { simulation.stop(); })
@@ -364,7 +366,7 @@ function update() {
       tila.enter().append("text")
         .merge(tila)
         .attr("class", "timelabel")
-        .text(function(d){ if(displaytimelabels){return "t: "+d;}})
+        .text(function(d){ if(displaytimelabels){return d;}})
         .attr("dx", function(d){return width*0.01;})
         .attr("dy", function(d){return height*0.98;})
         .style("font-size", fontsize*0.6+"px")
