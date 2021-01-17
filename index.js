@@ -31,6 +31,7 @@ var displaynodelabels=true
 var displaytimelabels=true
 var displaylayerlabels=true
 var distributelayers=true; distributelayers?1:rscal*=0.3
+var toggleequaltypedistance=false
 var linkopacity = 0.5;
 var arrowopacity = 0.5;//linkopacity*0.6;
 var layeropacity = 0.3;
@@ -44,6 +45,7 @@ var arrowcolor = linkcolor;
 var markerbreite = 12;
 var markerhoehe = 12;
 var withinlinks = [];
+var simulationtoggle = true;
 var nlayers;
 var lay;
 var mpl;
@@ -137,7 +139,15 @@ function timeforwards(){
 // If using Vimium in Browser, escape with "p"; e.g. Press "pa"
 document.addEventListener("keydown", function(event){
     if (event.which == 65) { timebackwards() }
-    if (event.which == 83) { () => simulation.stop() }
+    if (event.which == 83) {
+        if (simulationtoggle == true) {
+            simulation.stop()
+            simulationtoggle = false
+        } else {
+            simulation.restart()
+            simulationtoggle = true
+        }
+    }
     if (event.which == 68) { timeforwards() }
 })
 
@@ -175,7 +185,7 @@ function defaultdata(){
     return outdata
 }
 // Load network data from external file with toy net as fallback
-d3.json("asdfpydata.json", function(error, data){
+d3.json("pydata.json", function(error, data){
      if (error){ data={"links":defaultdata()} }
      allgraphlinks = data["links"];
 // d3.csv("firms.csv", function(error, data){
@@ -254,23 +264,25 @@ d3.json("asdfpydata.json", function(error, data){
   // SIMULATION INIT
   simulation
     .force("charge", d3.forceManyBody()
-    .strength(linkstrengthscale * Math.max(Math.min(
-        -100, 
-        -1000 + 500*(Math.sqrt(Object.keys(allgraphlinks).length/(Object.keys(graphtimes).length*Object.keys(graphlayers).length)))),
-        -1000
-    ))
-    .distanceMin(10)
-    .distanceMax(400)
-  )
+        .strength(linkstrengthscale * Math.max(Math.min(
+            -100, 
+            -1000 + 500*(Math.sqrt(Object.keys(allgraphlinks).length/(Object.keys(graphtimes).length*Object.keys(graphlayers).length)))),
+            -1000))
+        .distanceMin(10).distanceMax(400)
+    )
     .force("link", d3.forceLink()
         .id(function(d){ return d.index; })
-        // .distance(function(d){ 
-        //     if (d.sourcetype.name == d.targettype.name){
-        //         return 1
-        //     } else {
-        //         return 200
-        //     }
-        // })
+         .distance(function(d){ 
+             if (d.sourcetype.name == d.targettype.name){
+                 return 30 //default
+             } else {
+                 if (toggleequaltypedistance == true) {
+                     return 30
+                 } else {
+                     return 250
+                 }
+             }
+         })
     )
     .force("center", d3.forceCenter(width/2, height/2))
     .force('collide', d3.forceCollide(25))
@@ -485,7 +497,7 @@ function update() {
         simulation.nodes(graphnodes);
         simulation.on("tick", tick);
         simulation.force("link").links(graphlinks);
-        simulation.alphaTarget(0.3).restart();
+        simulation.alphaTarget(0.2).restart();
 
         function tick() {
             for (lay=nlayers-1; lay>=0; lay--){
