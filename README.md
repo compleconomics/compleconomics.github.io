@@ -2,9 +2,13 @@
 
 <-- Navigation -->
   <-- "a":             Timestep backwards -->
+  
   <-- "s":             Stop Simulation -->
+  
   <-- "d":             Timestep forwards -->
+  
   <-- "Ctrl+p":        Print SVG to PDF (in Chrome) -->
+  
 <-- Info: -->
   <-- Nodesize: Within-layer total degree -->
   <-- Edgesize: Individual-connection weight -->
