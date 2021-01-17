@@ -408,7 +408,7 @@ function update() {
             .attr("class", "link")
             .attr("marker-end", "url(#arrowGray)")
             .style("stroke-width", function(d){return Math.sqrt(d.value);})
-            .style("fill", linkcolor)
+             //.style("fill", linkcolor) //conflicts with printing
             .style("stroke-opacity", linkopacity);
         dilink_layer[lay].selectAll(".linktitle").remove();
         dilink_layer[lay].append("title")
