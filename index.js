@@ -19,14 +19,16 @@ var _transitions = [
 ]
 
 // Variable declarations
-var minscal = 8;
+var minscal = 25;
 var rscal = 100;
 var width = 1000
 var height = 4/6*width;
-var boundingbox=true
-var togglelayerlabels=true
-var togglenodelabels=true
-var toggletimelabels=true
+var sorttimelabels=true
+var sortlayerlabels=true
+var toggleboundingbox=true
+var displaylayerlabels=true
+var displaynodelabels=true
+var displaytimelabels=true
 var linkopacity = 0.5;
 var arrowopacity = 0.75;//linkopacity*0.6;
 var layeropacity = 0.3;
@@ -159,7 +161,7 @@ function defaultdata(){
     return outdata
 }
 // Load network data from external file with toy net as fallback
-d3.json("miserables.json", function(error, data){
+d3.json("pydata.json", function(error, data){
      if (error){ data={"links":defaultdata()} }
      allgraphlinks = data["links"];
 // d3.csv("firms.csv", function(error, data){
@@ -187,8 +189,19 @@ d3.json("miserables.json", function(error, data){
   graphnodes = d3.values(nodes);
   numberofnodes = graphnodes.length;
   graphnodes.forEach(function(d){ d.nodetype = {}; d.degree = {}; d.outdegree = {}; d.indegree = {}; })
-  graphlayers = layers;
-  graphtimes = times;
+  // graphlayers = layers;
+  // graphtimes = times;
+  if (sortlayerlabels == true){
+      graphlayers = Object.keys(layers).sort().reduce( (r,k) => (r[k]=layers[k], r), {} )
+  } else {
+      graphlayers = layers
+  }
+  if (sorttimelabels == true){
+  graphtimes = Object.keys(times).sort().reduce( (r,k) => (r[k]=times[k], r), {} )
+  } else {
+      graphtimes = times
+  }
+  /////// https://stackoverflow.com/questions/5467129/sort-javascript-object-by-key
   nlayers = Object.keys(graphlayers).length;
   for (var i=0; i<nlayers-laymanual; i++){
     laycolor.push(threerand())
@@ -280,8 +293,8 @@ d3.json("miserables.json", function(error, data){
     layer_label[lay] = svg_layer[lay].selectAll(".layerlabel")
       .data([Object.values(graphlayers_without)[lay]])
       .enter().append("text")
-      .text(function(d){if(togglelayerlabels){return d;}})
-      .attr("dx", function(d){if(d){return width-0.8*d.toString().length*fontsize;}})
+      .text(function(d){if(displaylayerlabels){return d;}})
+      .attr("dx", function(d){if(d){return width*0.98-0.55*d.toString().length*fontsize;}})
       .attr("dy", fontsize)
       .style("font-size", fontsize+"px")
       .style("stroke", "#000000")
@@ -294,7 +307,7 @@ d3.json("miserables.json", function(error, data){
   svg_layer[0].selectAll(".nodetypelabel")
     .data(graphnodetypes_without)
     .enter().append("text")
-    .text(function(d){if(togglenodelabels){return d;}})
+    .text(function(d){if(displaynodelabels){return d;}})
     .attr("dx", function(d){return width*0.01;})
     .attr("dy", function(d){nodetypezaehler++; return fontsize*0.4*nodetypezaehler;})
     .style("font-size", fontsize*0.5+"px")
@@ -333,7 +346,7 @@ function update() {
       tila.enter().append("text")
         .merge(tila)
         .attr("class", "timelabel")
-        .text(function(d){ if(toggletimelabels){return "t: "+d;}})
+        .text(function(d){ if(displaytimelabels){return "t: "+d;}})
         .attr("dx", function(d){return width*0.01;})
         .attr("dy", function(d){return height*0.98;})
         .style("font-size", fontsize*0.6+"px")
@@ -416,12 +429,12 @@ function update() {
             .merge(nola)
             .attr("class", "texts")
             //.attr("x", function(d){return 0.1*String(d.name).length*fonsizescaling(d)+"px"})
-            .attr("dx", function(d){return -0.3*String(d.name).length*nodesizescaling(d)+"px"})
+            .attr("dx", function(d){return -0.28*String(d.name).length*nodesizescaling(d)+"px"})
             .attr("dy", function(d){return 0.25*nodesizescaling(d)+"px"})
             //.attr("dx", "-4px")
             //.attr("dy", "4px")
-            .text(function(d) { if(togglenodelabels){return d.name;} })
-            .style("font-size", function(d){return nodesizescaling(d); })
+            .text(function(d) { if(displaynodelabels){return d.name;} })
+            .style("font-size", function(d){return nodesizescaling(d)+"px"; })
             .style("fill", function(d){return nodelaycolor[d.nodetype.name]+"1.0)"}) //"#000000"
             .style("stroke", function(d){return nodelaycolor[d.nodetype.name]+"1.0)"})//laycolor[lay]+layeropacity+")"
             .style("opacity", textopacity)
@@ -476,7 +489,7 @@ function update() {
 
 
 
-                if (boundingbox == true){
+                if (toggleboundingbox == true){
                     circle_layer[lay]
                         .attr("cx", function(d) { 
                             radius = nodesizescaling(d) 
