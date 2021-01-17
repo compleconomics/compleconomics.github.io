@@ -19,18 +19,20 @@ var _transitions = [
 ]
 
 // Variable declarations
-var minscal = 25;
-var rscal = 100;
-var width = 1000
+var minscal = 8;
+var rscal = 80;
+var width = 800
 var height = 4/6*width;
+var linkstrengthscale = 10 //[1,100] is advisable
 var sorttimelabels=true
 var sortlayerlabels=true
 var toggleboundingbox=true
-var displaylayerlabels=true
 var displaynodelabels=true
 var displaytimelabels=true
+var displaylayerlabels=true
+var distributelayers=true; distributelayers?1:rscal*=0.3
 var linkopacity = 0.5;
-var arrowopacity = 0.75;//linkopacity*0.6;
+var arrowopacity = 0.5;//linkopacity*0.6;
 var layeropacity = 0.3;
 var textopacity = 1.0;
 var nodeopacity = 1;
@@ -141,6 +143,7 @@ function defaultdata(){
   var outdata = [
       {source:"N1", target:"N2", layer:"eins", value:100, time:0, sourcetype:"c", targettype:"c"},
       {source:"N2", target:"N3", layer:"eins", value:1000, time:0, sourcetype:"c", targettype:"p"},
+      {source:"N2", target:"N3", layer:"drei", value:250, time:0, sourcetype:"c", targettype:"p"},
       {source:"N2", target:"N4", layer:"eins", value:50, time:0, sourcetype:"c", targettype:"p"},
       {source:"N1", target:"N3", layer:"eins", value:50, time:0, sourcetype:"c", targettype:"p"},
       {source:"N2", target:"N4", layer:"zwei", value:9, time:0, sourcetype:"c", targettype:"p"},
@@ -168,7 +171,11 @@ d3.json("pydata.json", function(error, data){
 //     if (error){ data = defaultdata() }
 //     allgraphlinks = data;
 
+
   // Compute the distinct nodes and layers from the links.
+  if (distributelayers == false){
+      allgraphlinks.forEach(function(link){link.layer = ""})
+  }
   allgraphlinks.forEach(function(link) {
     link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
     link.target = nodes[link.target] || (nodes[link.target] = {name: link.target});
@@ -189,9 +196,10 @@ d3.json("pydata.json", function(error, data){
   graphnodes = d3.values(nodes);
   numberofnodes = graphnodes.length;
   graphnodes.forEach(function(d){ d.nodetype = {}; d.degree = {}; d.outdegree = {}; d.indegree = {}; })
-  // graphlayers = layers;
-  // graphtimes = times;
+
+
   if (sortlayerlabels == true){
+  /////// https://stackoverflow.com/questions/5467129/sort-javascript-object-by-key
       graphlayers = Object.keys(layers).sort().reduce( (r,k) => (r[k]=layers[k], r), {} )
   } else {
       graphlayers = layers
@@ -201,7 +209,8 @@ d3.json("pydata.json", function(error, data){
   } else {
       graphtimes = times
   }
-  /////// https://stackoverflow.com/questions/5467129/sort-javascript-object-by-key
+
+
   nlayers = Object.keys(graphlayers).length;
   for (var i=0; i<nlayers-laymanual; i++){
     laycolor.push(threerand())
@@ -233,10 +242,10 @@ d3.json("pydata.json", function(error, data){
   // SIMULATION INIT
   simulation
     .force("charge", d3.forceManyBody()
-    .strength(Math.max(Math.min(
-        -1000, 
-        -10000 + 5000*(Math.sqrt(Object.keys(allgraphlinks).length/(Object.keys(graphtimes).length*Object.keys(graphlayers).length)))),
-        -10000
+    .strength(linkstrengthscale * Math.max(Math.min(
+        -100, 
+        -1000 + 500*(Math.sqrt(Object.keys(allgraphlinks).length/(Object.keys(graphtimes).length*Object.keys(graphlayers).length)))),
+        -1000
     ))
     .distanceMin(10)
     .distanceMax(400)
@@ -263,14 +272,23 @@ d3.json("pydata.json", function(error, data){
       .attr("layer", Object.keys(graphlayers)[lay])
       .style("position", "absolute")
       .style("left", "100px")
-      .style("top", (lay*height/2).toString()+"px")
-      .style("background-color", laycolor[lay]+layeropacity+")" )
-      .style("transform","rotate3D(-0.9,0.4,0.4,70deg)")
-      .style("-webkit-transform","rotate3D(-0.9,0.4,0.4,70deg)")
-      .style("outline","1px solid black")
       .attr("width", width)
       .attr("height", height)
       .on("click", function() { simulation.stop(); })
+
+      if (distributelayers == false){
+          svg_layer[lay]
+              .style("top", "50px")
+              .style("background-color", "#FFFFFF")
+      } else {
+          //-height*0.05 is correctionfactor for upper border
+          svg_layer[lay]
+              .style("top", (-height*0.1+ lay*height/2.5).toString()+"px")
+              .style("transform","rotate3D(-0.9,0.4,0.4,70deg)")
+              .style("-webkit-transform","rotate3D(-0.9,0.4,0.4,70deg)")
+              .style("background-color",laycolor[lay]+layeropacity+")" )
+              .style("outline","1px solid black")
+      }
 
     // ARROWS (IN CASE OF DIRECTED LINKS)
     svg_layer[lay].append("svg:defs").selectAll("marker")
