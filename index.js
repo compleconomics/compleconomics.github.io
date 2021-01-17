@@ -66,6 +66,7 @@ var reachedlinks = [];
 var t1n,t1r,tn,tr = [];
 var outtot;
 var intot;
+var graphlinks;
 var graphlayerlinks;
 var simulation = d3.forceSimulation();
 
