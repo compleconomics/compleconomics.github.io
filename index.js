@@ -132,11 +132,21 @@ function timeforwards(){
     update();
   }
 };
-d3.select("#goback-btn").on("click", timebackwards);
-d3.select("#stop-btn").on("click", () => simulation.stop());
-d3.select("#goforward-btn").on("click", timeforwards);
+// Press "a":Backward, "s":Stop, "d":Forward
+// If using Vimium in Browser, escape with "p"; e.g. Press "pa"
+document.addEventListener("keydown", function(event){
+    if (event.which == 65) { timebackwards() }
+    if (event.which == 83) { () => simulation.stop() }
+    if (event.which == 68) { timeforwards() }
+})
 
-
+////// add buttons to html document und uncomment d3.select for buttons
+// <button type="button" id="goback-btn" title="Previous timestep"> << </button>
+// <button type="button" id="stop-btn" title="Stop simulation: Click any node to resume"> || </button>
+// <button type="button" id="goforward-btn" title="Next timestep" > >> </button>
+// d3.select("#goback-btn").on("click", timebackwards);
+// d3.select("#stop-btn").on("click", () => simulation.stop());
+// d3.select("#goforward-btn").on("click", timeforwards);
 
 
 function defaultdata(){

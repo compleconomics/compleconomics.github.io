@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!-- Navigation -->
+  <!-- "a":             Timestep backwards -->
+  <!-- "s":             Stop Simulation -->
+  <!-- "d":             Timestep forwards -->
+  <!-- "Ctrl+p":        Print SVG to PDF (in Chrome) -->
 <!-- Info: -->
   <!-- Nodesize: Within-layer total degree -->
   <!-- Edgesize: Individual-connection weight -->
@@ -37,9 +42,6 @@
     </style>
   </head>
   <body>
-    <button type="button" id="goback-btn" title="Previous timestep"> << </button>
-    <button type="button" id="stop-btn" title="Stop simulation: Click any node to resume"> || </button>
-    <button type="button" id="goforward-btn" title="Next timestep"> >> </button>
     <script src="//d3js.org/d3.v4.min.js"></script>
     <script src="d3.min.js"></script>
     <script src="index.js"></script>
