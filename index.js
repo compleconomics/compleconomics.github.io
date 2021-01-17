@@ -131,7 +131,7 @@ d3.select("#goforward-btn").on("click", timeforwards);
 
 
 // Load network data from external file with toy net as fallback
-d3.csv("afsfirms.csv", function(error, links){
+d3.csv("firms.csv", function(error, links){
   if (error){
     //skiphere
     var links = [
@@ -308,8 +308,13 @@ d3.csv("afsfirms.csv", function(error, links){
     .distanceMin(100)
     .distanceMax(500)
   )
-    .force("link", d3.forceLink().id( function(d){
-      return d.index;})
+    .force("link", d3.forceLink()
+        .id(function(d){ return d.index; })
+        .distance(function(d){ 
+            if (d.sourcetype)
+            console.log(d.source.nodetype)
+            return 1
+        })
     )
     .force("center", d3.forceCenter(width/2, height/2))
     .force('collide', d3.forceCollide(25))
