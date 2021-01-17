@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!-- Navigation -->
+  <!-- "a":             Timestep backwards -->
+  <!-- "s":             Stop Simulation -->
+  <!-- "d":             Timestep forwards -->
+  <!-- "Ctrl+p":        Print SVG to PDF (in Chrome) -->
 <!-- Info: -->
   <!-- Nodesize: Within-layer total degree -->
   <!-- Edgesize: Individual-connection weight -->
@@ -17,6 +22,7 @@
 <!-- Utilities -->
   <!-- Hover Node + Click Shift Immediately:   Prevent Tooltip (from blocking space) -->
   <!-- Hold Shift with last Click: Display all remaining connections of neighbourhood in last step -->
+  <!-- In Reveal.js: scrolling backwards through slides and starting d3.js simulation from the end causes d3 to show the first simulation slide -- solution: scroll back to beginning, then forward -->
 <html>
   <head>
     <meta charset="utf-8">
@@ -37,9 +43,6 @@
     </style>
   </head>
   <body>
-    <button type="button" id="goback-btn" title="Previous timestep"> << </button>
-    <button type="button" id="stop-btn" title="Stop simulation: Click any node to resume"> || </button>
-    <button type="button" id="goforward-btn" title="Next timestep"> >> </button>
     <script src="//d3js.org/d3.v4.min.js"></script>
     <script src="d3.min.js"></script>
     <script src="index.js"></script>
